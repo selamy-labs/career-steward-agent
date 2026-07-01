@@ -15,7 +15,7 @@ A generic chart keeps the deployment adapter stable while the agent declaration 
 ## Consequences
 
 - The chart can be versioned independently.
-- Multiple Reeve-class agents can share one chart.
+- Multiple career-steward agents can share one chart.
 - Chart templates must be validated against the manifest-derived values.
 - Agent behavior changes happen in manifests/workflows/policies, not bespoke chart forks.
 

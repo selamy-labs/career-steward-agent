@@ -1,8 +1,8 @@
-# Technical Spec v1: Declarative Reeve-Class Agent
+# Technical Spec v1: Career Steward Agent
 
 ## Objective
 
-Define a buildable v1 specification and reference implementation for a Reeve-class career-steward agent. A fresh operator must be able to instantiate an equivalent agent for a new person from declarations alone, bringing only their own credentials, with no source-operator private data and no hidden imperative setup.
+Define a buildable v1 specification and reference implementation for a career-steward agent. A fresh operator must be able to instantiate an equivalent agent for a new person from declarations alone, bringing only their own credentials, with no source-operator private data and no hidden imperative setup.
 
 ## Canonical Inputs
 
@@ -29,6 +29,7 @@ Generated artifacts are deployment inputs, not the source of truth.
 The v1 reference image contains:
 
 - Hermes-compatible runtime entrypoint
+- canonical `nousresearch/hermes-agent` runtime base
 - manifest validator
 - reconciler
 - workflow and policy manifests

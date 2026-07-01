@@ -2,8 +2,8 @@ apiVersion: agents.selamy.dev/v1alpha1
 kind: CapabilityParityInventory
 metadata:
   evidence:
-    copiedBundle: local read-only copy of the current Reeve GitOps bundle outside this reusable repo
-    liveThread: "Telegram/Reeve messages 26824-26926 show read-only inventory request plus current career operations"
+    copiedBundle: local read-only copy of the source-agent GitOps bundle outside this reusable repo
+    liveThread: "Source-agent messages 26824-26926 show read-only inventory request plus current career operations"
     limitation: "The live read-only inventory artifact itself was not discoverable; parity rows use observable thread evidence and copied bundle files."
 capabilities:
   - id: runtime-kubernetes-hermes
@@ -38,7 +38,7 @@ capabilities:
     testFile: test_manifest_contract.py
   - id: telegram-coordination
     currentCapability: Telegram notifications, user directives, and agent thread coordination.
-    evidence: scripts/check_career_email.py, live Reeve thread
+    evidence: scripts/check_career_email.py, live source-agent thread
     declarativeSurface: agent.manifest.yaml capabilities.connectors.telegram
     test: test_telegram_connector_declared
     testFile: test_manifest_contract.py
@@ -50,13 +50,13 @@ capabilities:
     testFile: test_sim_mode.py
   - id: google-workspace
     currentCapability: Gmail, calendar, Drive/Docs operations through Google Workspace credentials and gws.
-    evidence: README.md, scripts/check_career_email.py, live Reeve thread career operations
+    evidence: README.md, scripts/check_career_email.py, live source-agent thread career operations
     declarativeSurface: agent.manifest.yaml capabilities.connectors.googleWorkspace
     test: test_google_workspace_connector_declared
     testFile: test_manifest_contract.py
   - id: linkedin
     currentCapability: LinkedIn inbox/profile/job read and approval-gated sends through Unipile/MCP tooling.
-    evidence: scripts/linkedin_tool.py, live Reeve thread
+    evidence: scripts/linkedin_tool.py, live source-agent thread
     declarativeSurface: agent.manifest.yaml capabilities.connectors.linkedin
     test: test_linkedin_connector_gates_sends
     testFile: test_policy_engine.py
@@ -80,7 +80,7 @@ capabilities:
     testFile: test_policy_engine.py
   - id: approval-gated-side-effects
     currentCapability: Replies, sends, scheduling, publishing, and resume sharing require exact current-user approval.
-    evidence: README.md, Reeve live messages, career docs
+    evidence: README.md, source-agent live messages, career docs
     declarativeSurface: policies/approval-gates.yaml
     test: test_exact_text_approval_required
     testFile: test_policy_engine.py

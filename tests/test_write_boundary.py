@@ -7,7 +7,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-from reeve_spec.validator import load_yaml
+from career_steward.validator import load_yaml
 
 
 class WriteBoundaryTest(unittest.TestCase):

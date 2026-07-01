@@ -10,11 +10,10 @@ Use explicit, idempotent state migrations recorded in the mutable state root. Th
 
 ## Rationale
 
-Reeve-class agents accumulate durable memory, pipeline state, audit logs, and workflow state. Upgrades must not silently reinterpret old state.
+Career-steward agents accumulate durable memory, pipeline state, audit logs, and workflow state. Upgrades must not silently reinterpret old state.
 
 ## Consequences
 
 - Every breaking state change ships with a migration.
 - Migration records are part of the agent's durable state.
 - Sim mode must exercise the migration planner even when no migration is required.
-

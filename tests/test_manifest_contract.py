@@ -8,8 +8,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-from reeve_spec.reconciler import reconcile
-from reeve_spec.validator import load_yaml, validate_repo
+from career_steward.reconciler import reconcile
+from career_steward.validator import load_yaml, validate_repo
 
 
 class ManifestContractTest(unittest.TestCase):
@@ -19,6 +19,8 @@ class ManifestContractTest(unittest.TestCase):
     def test_manifest_contract_runtime(self) -> None:
         runtime = self.manifest["runtime"]
         self.assertEqual(runtime["engine"], "hermes-agent")
+        self.assertEqual(runtime["image"]["repository"], "nousresearch/hermes-agent")
+        self.assertEqual(runtime["image"]["tag"], "main")
         self.assertEqual(runtime["image"]["tagPolicy"], "pinned-digest")
         self.assertIn("/opt/data/**", runtime["state"]["mutableZones"])
         self.assertIn("/etc/hermes/**", runtime["state"]["immutableZones"])
@@ -35,14 +37,16 @@ class ManifestContractTest(unittest.TestCase):
 
     def test_feature_flags_declared(self) -> None:
         flags = self.manifest["featureFlags"]["flags"]
-        self.assertIn("reeve.ops.career-email-check-enabled", flags)
-        self.assertIn("reeve.ops.whatsapp-intake-enabled", flags)
+        self.assertIn("career-steward.ops.career-email-check-enabled", flags)
+        self.assertIn("career-steward.ops.whatsapp-intake-enabled", flags)
         self.assertEqual(flags["fleet.verbosity"]["default"], "normal")
 
     def test_oci_contract_lists_bundled_skills(self) -> None:
         out = ROOT / "generated" / "test-contract"
         rendered = reconcile(ROOT, out)
         image = json.loads(rendered["image_manifest"].read_text())
+        self.assertEqual(image["runtimeBaseImage"], "nousresearch/hermes-agent:main")
+        self.assertEqual(image["tagPolicy"], "pinned-digest")
         self.assertIn("skill bundle references", image["contains"])
         self.assertIn("real user credentials", image["doesNotContain"])
 
@@ -70,4 +74,3 @@ class ManifestContractTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-

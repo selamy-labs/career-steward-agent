@@ -7,7 +7,8 @@ The v1 OCI image contains both the reference runtime payload and the reference r
 ## Included
 
 - Hermes-compatible entrypoint and runtime bootstrap hooks
-- `reeve_spec` Python reference package
+- canonical `nousresearch/hermes-agent` runtime base
+- `career_steward` Python reference package
 - manifest validator
 - reconciler
 - sim-mode runner
@@ -29,4 +30,4 @@ The v1 OCI image contains both the reference runtime payload and the reference r
 
 ## Consumer Contract
 
-Consumers pin the image by digest. The Helm chart mounts or embeds the selected manifest and wires declared secret references from the downstream environment.
+Consumers pin published images by digest. The Helm chart mounts or embeds the selected manifest and wires declared secret references from the downstream environment.

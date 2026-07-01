@@ -6,7 +6,7 @@ Proposed.
 
 ## Context
 
-The repository is not itself the deployed agent. It is the source specification for a Reeve-class agent.
+The repository is not itself the deployed agent. It is the source specification for a career-steward agent.
 
 The repository should be deployable in the sense that it produces deployable artifacts, but it should not assume ownership of any particular user's infrastructure. A downstream environment should be able to consume the artifact and wire it into its own Kubernetes, GitOps, secret store, and policy stack.
 
@@ -30,11 +30,11 @@ Downstream infrastructure should consume pinned artifacts:
 
 ```yaml
 agentImage:
-  repository: ghcr.io/example/reeve-agent
+  repository: ghcr.io/example/career-steward-agent
   digest: sha256:...
 
 agentChart:
-  repository: oci://ghcr.io/example/charts/reeve-agent
+  repository: oci://ghcr.io/example/charts/career-steward-agent
   version: 0.1.0
 ```
 
@@ -52,7 +52,7 @@ Bazel is useful as the internal build and verification graph:
 - generate conformance fixtures
 - make builds reproducible from source
 
-However, Bazel should not be the only consumption mechanism. A downstream repo that merely wants to run a Reeve-like agent should not need to become a Bazel workspace or depend on a source checkout as its deployment primitive.
+However, Bazel should not be the only consumption mechanism. A downstream repo that merely wants to run a career-steward agent should not need to become a Bazel workspace or depend on a source checkout as its deployment primitive.
 
 Preferred shape:
 
@@ -95,7 +95,7 @@ Helm is the Kubernetes packaging adapter. The source of truth is the agent manif
 
 ### Repository-As-Deployment
 
-Making this repo directly deploy itself into environments couples the agent product to one infrastructure topology. That is wrong for a reusable Reeve-class agent.
+Making this repo directly deploy itself into environments couples the agent product to one infrastructure topology. That is wrong for a reusable career-steward agent.
 
 ### Bazel-Only Consumption
 
@@ -104,4 +104,3 @@ Depending on a Bazel Git target can work for internal mono/federated repos, but 
 ### Helm-As-Source-Of-Truth
 
 A Helm chart alone can describe Kubernetes objects, but it is too low-level to describe the agent's semantic capabilities, approval gates, workflows, knowledge boundaries, and required accounts. Helm should package those declarations, not replace them.
-

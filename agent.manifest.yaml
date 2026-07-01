@@ -13,15 +13,15 @@ x-versioning:
     minSupportedMinorVersions: 2
     removalRequiresMigration: true
 metadata:
-  name: reeve-like-career-steward
+  name: career-steward-agent
   owner: user
   description: >
-    A Reeve-class personal assistant agent for career stewardship,
+    A career-steward personal assistant agent for career stewardship,
     communications triage, interview prep, content-inbound support,
     and approval-gated external action.
 
 identity:
-  displayName: Reeve
+  displayName: Career Steward
   role: Personal assistant and career steward
   mandate: >
     Steward the principal's career and communications by triaging
@@ -35,7 +35,8 @@ identity:
 runtime:
   engine: hermes-agent
   image:
-    repository: ghcr.io/selamy-labs/hermes-agent
+    repository: nousresearch/hermes-agent
+    tag: main
     tagPolicy: pinned-digest
   model:
     provider: openai-codex-compatible
@@ -199,13 +200,13 @@ schedules:
 featureFlags:
   provider: openfeature-flagd
   flags:
-    reeve.ops.career-email-check-enabled:
+    career-steward.ops.career-email-check-enabled:
       type: boolean
       default: true
-    reeve.ops.whatsapp-intake-enabled:
+    career-steward.ops.whatsapp-intake-enabled:
       type: boolean
       default: true
-    reeve.runtime.busy-input-mode:
+    career-steward.runtime.busy-input-mode:
       type: enum
       values: [interrupt, queue]
       default: interrupt

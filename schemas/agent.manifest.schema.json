@@ -79,9 +79,11 @@
         "engine": { "type": "string" },
         "image": {
           "type": "object",
-          "required": ["repository", "tagPolicy"],
+          "additionalProperties": false,
+          "required": ["repository", "tag", "tagPolicy"],
           "properties": {
             "repository": { "type": "string" },
+            "tag": { "type": "string" },
             "tagPolicy": { "enum": ["pinned-digest", "semver-plus-digest"] }
           }
         },
@@ -184,4 +186,3 @@
     }
   }
 }
-

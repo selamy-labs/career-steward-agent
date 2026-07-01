@@ -1,114 +1,91 @@
-# Declarative Reeve Agent Repo Blueprint
+# Career Steward Agent
 
-This is a repository-shaped blueprint for a Reeve-like agent whose behavior is declared in source and reconciled into a running agent.
+Declarative specification and reference implementation for approval-gated career-steward agents.
 
-The central idea: the repo is not just code plus docs. The repo is the agent contract.
+## What & Why
 
-The repo is a source vessel, not the deployment itself. It should produce immutable delivery artifacts such as an OCI image and Helm chart, then downstream infrastructure repos decide when and how to deploy them.
+This repository defines a reusable career-steward agent from source declarations: identity, runtime, connectors, workflows, schedules, secrets, policy, state, observability, and tests. Operators bring their own credentials by reference; no private source-operator data or hidden setup belongs in the repo.
 
-## Objective
+The repo is a specification and build source, not a live deployment. CI proves the spec, sim mode, and generated artifacts; downstream infrastructure decides whether to run the produced OCI image and Helm chart.
 
-Represent a complete Reeve-class agent declaratively:
+## Quickstart
 
-- identity and mandate
-- model/runtime configuration
-- tools and connectors
-- skills and workflows
-- knowledge stores and writable state
-- schedules and event triggers
-- approval gates and side-effect policy
-- required secrets and account prerequisites
-- deployment and reconciliation path
-- observability and verification
-
-The repository may depend on secrets, OAuth grants, bot accounts, browser profiles, or API keys. It must declare those dependencies explicitly, but it must not commit secret values.
-
-## Source Of Truth
-
-`agent.manifest.yaml` is the intended root declaration. Everything else should either be referenced by it or generated/validated from it:
-
-```text
-agent.manifest.yaml
-  -> contracts/required-secrets.yaml
-  -> workflows/*.yaml
-  -> policies/*.yaml
-  -> Helm/OpenTofu/ExternalSecret output
-  -> runtime config
-  -> cron/job registrations
-  -> tests and conformance checks
+```bash
+git clone https://github.com/selamy-labs/career-steward-agent.git
+cd career-steward-agent
+python3 -m pip install pyyaml
+make verify
 ```
 
-## What This Fixes
-
-Current Reeve already has many declarative pieces: Helm, ExternalSecrets, ArgoCD, ConfigMaps, OpenFeature flags, read-only managed scripts, cron bootstrap, state retention, and tests.
-
-The missing layer is a single typed agent manifest that says, in one place:
-
-- what the agent can do
-- what accounts it acts through
-- what secrets must exist
-- what side effects are allowed
-- what schedules run
-- what durable state it owns
-- what validation proves the agent is correctly instantiated
-
-## Repository Shape
+Expected result:
 
 ```text
-.
-├── agent.manifest.yaml
-├── contracts/
-│   └── required-secrets.yaml
-├── docs/
-│   ├── adr-001-vessel-and-distribution.md
-│   └── repo-spec.md
-├── policies/
-│   └── approval-gates.yaml
-├── reconcile/
-│   └── README.md
-├── schemas/
-│   └── agent.manifest.schema.json
-└── workflows/
-    ├── career-steward.yaml
-    ├── content-inbound.yaml
-    ├── state-maintenance.yaml
-    └── whatsapp-intake.yaml
+validation.status: ok
+16 tests run
+touchedRealAccounts: false
+externalSideEffects: []
 ```
 
-## Secret Contract
+## Requirements
 
-Secrets are declared as required inputs:
+- Python 3.11+
+- `make`
+- PyYAML
 
-- name
-- provider
-- external secret key
-- runtime mount/env target
-- scope of use
-- verification command or check
-- whether the credential is required for boot or only for a workflow
+Sim mode uses fake fixtures only. Real accounts require declared secret references in `contracts/required-secrets.yaml`; secret values must never be committed.
 
-Secret values do not belong in git. The reconciler should fail fast when a required secret reference is missing or unverified.
+## Usage
 
-## First Implementation Slice
+`agent.manifest.yaml` is the source of truth. Edit it to instantiate a new agent identity, then verify:
 
-The first real implementation should not clone all Reeve scripts by hand. It should implement the manifest contract and prove that these declared surfaces generate or validate:
+```bash
+make verify
+make sim
+```
 
-1. ExternalSecrets mappings
-2. runtime config
-3. cron registrations
-4. OpenFeature flags
-5. approval-gate policy
-6. capability inventory
-7. conformance tests
-
-After that, workflows can be ported one by one.
-
-## Build And Distribution Position
-
-The preferred vessel model is:
+The sim walkthrough in `docs/instantiate-new-person-sim.md` proves one full loop:
 
 ```text
-source repo -> CI -> OCI image + Helm chart -> downstream infra repo -> deployment
+intake -> classify -> draft -> approval gate -> pipeline update -> privacy validation
 ```
 
-Bazel can be the internal build graph for reproducible image/chart production. It should not be the only consumption path. Most downstream users should be able to pin an image digest and chart version without adopting Bazel.
+## Architecture
+
+```mermaid
+flowchart LR
+  manifest["agent.manifest.yaml"] --> reconciler["reference reconciler"]
+  contracts["contracts + policies + workflows"] --> reconciler
+  reconciler --> generated["generated runtime, Helm, secrets, schedules"]
+  generated --> artifacts["OCI image + Helm chart"]
+  artifacts --> downstream["downstream infra repo"]
+```
+
+The runtime is Hermes-compatible and uses the canonical `nousresearch/hermes-agent` base image. Published runtime artifacts are consumed by digest.
+
+## Configuration
+
+- Manifest schema: `schemas/agent.manifest.schema.json`
+- Reconciler contract: `docs/reconciler-contract.md`
+- Policy engine: `docs/policy-engine-spec.md`
+- Observability: `docs/observability-contract.md`
+- State and migration: `docs/state-memory-migration.md`
+- Capability parity: `docs/capability-parity-inventory.md`
+- Distribution ADR: `docs/adr-001-vessel-and-distribution.md`
+
+## Development
+
+```bash
+make test
+make verify
+python3 scripts/scan_private_markers.py
+```
+
+`make verify` runs schema/contract validation, policy tests, write-boundary tests, and a no-real-accounts sim smoke test.
+
+## Contributing
+
+Changes must keep `agent.manifest.yaml` as the single source of truth. PRs must pass CI, preserve approval gates and privacy validation, and avoid committed credentials, private tracker data, or environment-specific deployment state.
+
+## License
+
+Apache-2.0. See `LICENSE`.

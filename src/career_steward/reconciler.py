@@ -80,11 +80,14 @@ def render_schedules(manifest: dict[str, Any]) -> dict[str, Any]:
 
 
 def render_image_manifest(manifest: dict[str, Any]) -> dict[str, Any]:
+    image = manifest["runtime"]["image"]
     return {
         "imageContractVersion": manifest["apiVersion"],
+        "runtimeBaseImage": f"{image['repository']}:{image['tag']}",
+        "tagPolicy": image["tagPolicy"],
         "contains": [
             "hermes-compatible runtime entrypoint",
-            "reeve_spec reference reconciler",
+            "career_steward reference reconciler",
             "workflow manifests",
             "policy manifests",
             "schema validators",

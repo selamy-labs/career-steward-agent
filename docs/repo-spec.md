@@ -1,8 +1,8 @@
-# Spec: Declarative Reeve-Class Agent Repository
+# Spec: Career Steward Agent Repository
 
 ## Objective
 
-Build one repository that fully describes a Reeve-like agent as declarative source. A clean checkout plus declared prerequisites should be enough to reconcile the agent into a running, auditable, least-privilege software employee.
+Build one repository that fully describes a career-steward agent as declarative source. A clean checkout plus declared prerequisites should be enough to reconcile the agent into a running, auditable, least-privilege software employee.
 
 ## Assumptions
 
@@ -12,11 +12,11 @@ Build one repository that fully describes a Reeve-like agent as declarative sour
 - Secret values are never committed; required secret references are committed.
 - Some accounts require manual prerequisite setup, but the repo declares and verifies those prerequisites.
 
-## Current Reeve Capability Surface To Preserve
+## Source Capability Surface To Preserve
 
-From the copied Reeve GitOps bundle:
+From the copied source-agent GitOps bundle:
 
-- Kubernetes/Hermes runtime with pinned image and digest policy
+- Kubernetes/Hermes runtime with canonical `nousresearch/hermes-agent` image and digest policy
 - ArgoCD reconciliation from Git
 - ExternalSecrets for model, GitHub, GHCR, Codex, Google, Telegram, and Unipile-like credentials
 - PVC-backed writable state at `/opt/data`
@@ -78,14 +78,14 @@ See `docs/adr-001-vessel-and-distribution.md`.
 
 1. Stabilize `agent.manifest.yaml` and schema.
 2. Add required secret contract and verification checks.
-3. Add workflow manifests for current Reeve lanes.
+3. Add workflow manifests for source-agent lanes.
 4. Add approval/privacy policy manifests.
 5. Add Bazel or equivalent build graph targets for manifest validation, image build, chart package, and conformance tests.
 6. Build a reconciler that renders Helm values and runtime config from the manifest.
 7. Add CI gates for secret safety, approval gates, schedules, immutable runtime boundaries, image build, chart render, and vulnerability/SBOM checks.
 8. Publish immutable image/chart artifacts on approved release.
-9. Port current Reeve behavior behind the manifest one workflow at a time.
+9. Port source-agent behavior behind the manifest one workflow at a time.
 
 ## Boundary
 
-This blueprint is not yet the production Reeve repo. It is the shape that the production repo should move toward.
+This repository is a reusable source specification. It must not contain private source-operator data, environment-specific deployment state, or hidden imperative setup.

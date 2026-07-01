@@ -7,8 +7,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-from reeve_spec.policy import ApprovalRequest, exact_text_approved, privacy_errors, validate_external_action
-from reeve_spec.validator import load_yaml
+from career_steward.policy import ApprovalRequest, exact_text_approved, privacy_errors, validate_external_action
+from career_steward.validator import load_yaml
 
 
 class PolicyEngineTest(unittest.TestCase):

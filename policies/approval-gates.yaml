@@ -1,7 +1,7 @@
 apiVersion: agents.selamy.dev/v1alpha1
 kind: ApprovalPolicy
 metadata:
-  agent: reeve-like-career-steward
+  agent: career-steward-agent
 
 default: deny-external-side-effects
 

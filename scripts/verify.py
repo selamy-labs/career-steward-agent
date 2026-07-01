@@ -9,8 +9,8 @@ ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "src"
 sys.path.insert(0, str(SRC))
 
-from reeve_spec.reconciler import reconcile
-from reeve_spec.validator import load_yaml, validate_repo
+from career_steward.reconciler import reconcile
+from career_steward.validator import load_yaml, validate_repo
 
 
 def main() -> int:
