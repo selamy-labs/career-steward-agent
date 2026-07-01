@@ -1,0 +1,21 @@
+apiVersion: agents.selamy.dev/v1alpha1
+kind: AgentWorkflow
+metadata:
+  name: state-maintenance
+
+purpose: >
+  Keep long-running agent state healthy without changing business behavior.
+
+capabilities:
+  - state-retention
+  - sqlite-cleanup
+  - pvc-cache-pruning
+  - video-cache-pruning
+  - log-pruning
+  - restart-safe-maintenance
+
+safety:
+  affectsExternalWorld: false
+  maxDeletePerRun: 25000
+  retentionDays: 14
+

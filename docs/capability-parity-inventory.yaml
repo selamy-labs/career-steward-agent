@@ -1,0 +1,98 @@
+apiVersion: agents.selamy.dev/v1alpha1
+kind: CapabilityParityInventory
+metadata:
+  evidence:
+    copiedBundle: local read-only copy of the current Reeve GitOps bundle outside this reusable repo
+    liveThread: "Telegram/Reeve messages 26824-26926 show read-only inventory request plus current career operations"
+    limitation: "The live read-only inventory artifact itself was not discoverable; parity rows use observable thread evidence and copied bundle files."
+capabilities:
+  - id: runtime-kubernetes-hermes
+    currentCapability: Kubernetes/Hermes runtime with pinned image, resources, probes, PVC, ArgoCD source.
+    evidence: README.md, values.yaml, templates/statefulset.yaml
+    declarativeSurface: agent.manifest.yaml runtime and ADR 001
+    test: test_manifest_contract_runtime
+    testFile: test_manifest_contract.py
+  - id: external-secrets
+    currentCapability: ExternalSecrets-backed credential references for model, GitHub, GHCR, Google, Telegram, Unipile, Codex, SSH.
+    evidence: values.yaml, templates/externalsecrets.yaml
+    declarativeSurface: contracts/required-secrets.yaml
+    test: test_secret_references_are_declared_not_values
+    testFile: test_manifest_contract.py
+  - id: write-boundary
+    currentCapability: PVC mutable workspace with read-only repo-owned scripts/config/runtime mounts.
+    evidence: README.md, templates/statefulset.yaml, tests/test_runtime_write_boundary.py
+    declarativeSurface: agent.manifest.yaml runtime.state and policies.writeBoundary
+    test: test_write_boundary_declared
+    testFile: test_write_boundary.py
+  - id: openfeature-runtime-knobs
+    currentCapability: OpenFeature/flagd knobs for fleet verbosity, busy mode, career email, WhatsApp intake.
+    evidence: values.yaml, templates/configmap-openfeature-flags.yaml
+    declarativeSurface: agent.manifest.yaml featureFlags
+    test: test_feature_flags_declared
+    testFile: test_manifest_contract.py
+  - id: managed-skills
+    currentCapability: Skills bundle pin/init and external skills directory.
+    evidence: values.yaml, config/config.yaml, templates/configmap-skills-pin.yaml
+    declarativeSurface: agent.manifest.yaml capabilities.toolsets and OCI image contents
+    test: test_oci_contract_lists_bundled_skills
+    testFile: test_manifest_contract.py
+  - id: telegram-coordination
+    currentCapability: Telegram notifications, user directives, and agent thread coordination.
+    evidence: scripts/check_career_email.py, live Reeve thread
+    declarativeSurface: agent.manifest.yaml capabilities.connectors.telegram
+    test: test_telegram_connector_declared
+    testFile: test_manifest_contract.py
+  - id: career-email-triage
+    currentCapability: Hourly career email scan, critical notifications, routine digest queue, Gmail state checks.
+    evidence: scripts/check_career_email.py, values.yaml tokenomics cron
+    declarativeSurface: workflows/career-steward.yaml and schedules.careerEmailCheck
+    test: test_career_steward_loop_sim
+    testFile: test_sim_mode.py
+  - id: google-workspace
+    currentCapability: Gmail, calendar, Drive/Docs operations through Google Workspace credentials and gws.
+    evidence: README.md, scripts/check_career_email.py, live Reeve thread career operations
+    declarativeSurface: agent.manifest.yaml capabilities.connectors.googleWorkspace
+    test: test_google_workspace_connector_declared
+    testFile: test_manifest_contract.py
+  - id: linkedin
+    currentCapability: LinkedIn inbox/profile/job read and approval-gated sends through Unipile/MCP tooling.
+    evidence: scripts/linkedin_tool.py, live Reeve thread
+    declarativeSurface: agent.manifest.yaml capabilities.connectors.linkedin
+    test: test_linkedin_connector_gates_sends
+    testFile: test_policy_engine.py
+  - id: whatsapp-intake
+    currentCapability: Read-only WhatsApp group intake with paraphrased digests and no sends.
+    evidence: scripts/check_whatsapp_intake.py, README.md
+    declarativeSurface: workflows/whatsapp-intake.yaml
+    test: test_whatsapp_send_forbidden
+    testFile: test_policy_engine.py
+  - id: career-pipeline
+    currentCapability: Career pipeline, evidence bank, target packets, interview intel, throughput ledger.
+    evidence: docs/career-pipeline.*, docs/career-evidence-bank.json, docs/interview-intel-db.*, scripts/render_career_packets.py
+    declarativeSurface: workflows/career-steward.yaml stateModel and outputs
+    test: test_sim_updates_pipeline_row
+    testFile: test_sim_mode.py
+  - id: content-inbound
+    currentCapability: Article fodder, content-inbound strategy, public-safety scrub, approval-gated drafts.
+    evidence: docs/content-inbound-engine.md, docs/selamy-article-fodder-backlog.md
+    declarativeSurface: workflows/content-inbound.yaml
+    test: test_public_privacy_validation_blocks_pii
+    testFile: test_policy_engine.py
+  - id: approval-gated-side-effects
+    currentCapability: Replies, sends, scheduling, publishing, and resume sharing require exact current-user approval.
+    evidence: README.md, Reeve live messages, career docs
+    declarativeSurface: policies/approval-gates.yaml
+    test: test_exact_text_approval_required
+    testFile: test_policy_engine.py
+  - id: state-maintenance
+    currentCapability: State retention and PVC pruning cron workflows.
+    evidence: values.yaml, templates/cronjob-state-retention.yaml, templates/cronjob-pvc-pruning.yaml
+    declarativeSurface: workflows/state-maintenance.yaml and schedules
+    test: test_state_maintenance_schedules_declared
+    testFile: test_manifest_contract.py
+  - id: ci-secret-scan
+    currentCapability: CI, Python tests, Helm lint/template, kubeconform, secret scan.
+    evidence: .github/workflows/ci.yml, .github/workflows/secret-scan.yml
+    declarativeSurface: Makefile, scripts/verify.py, docs/technical-spec-v1.md
+    test: test_verify_contract_has_quality_gates
+    testFile: test_manifest_contract.py

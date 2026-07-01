@@ -1,0 +1,66 @@
+apiVersion: agents.selamy.dev/v1alpha1
+kind: AgentWorkflow
+metadata:
+  name: career-steward
+
+purpose: >
+  Maintain an approval-gated career pipeline across email, LinkedIn,
+  calendar, resumes, interviews, prep artifacts, and follow-up drafts.
+
+inputs:
+  connectors:
+    - googleWorkspace.gmail
+    - googleWorkspace.calendar
+    - linkedin
+    - github
+    - telegram
+  knowledge:
+    - wiki
+    - careerGraph
+
+capabilities:
+  - career-email-triage
+  - linkedin-inbox-triage
+  - opportunity-classification
+  - duplicate-notification-suppression
+  - calendar-state-reconciliation
+  - interview-prep-doc-generation
+  - transcript-debrief-ingestion
+  - resume-variant-checklist
+  - target-packet-rendering
+  - approval-gated-reply-drafting
+  - throughput-ledger-updates
+
+stateModel:
+  opportunityStates:
+    - new-lead
+    - qualification-needed
+    - resume-requested
+    - scheduling-needed
+    - booked-prep
+    - assessment
+    - interview-loop
+    - awaiting-counterpart
+    - closed
+  decisionClasses:
+    - reply-needed
+    - scheduling
+    - prep-only
+    - resume-needed
+    - application-receipt
+    - closure
+    - passive-review
+    - noise
+
+outputs:
+  private:
+    - pipeline-row
+    - company-page
+    - contact-page
+    - reply-draft
+    - prep-doc
+    - transcript-debrief
+    - weekly-throughput-report
+  external:
+    policy: approval-required
+

@@ -1,0 +1,40 @@
+apiVersion: agents.selamy.dev/v1alpha1
+kind: ApprovalPolicy
+metadata:
+  agent: reeve-like-career-steward
+
+default: deny-external-side-effects
+
+sideEffects:
+  allowedWithoutApproval:
+    - read.email
+    - read.calendar
+    - read.linkedin
+    - read.whatsapp
+    - read.web
+    - write.private-wiki
+    - write.private-draft
+    - notify.user-telegram
+  requireExactApproval:
+    - send.email
+    - send.linkedin-message
+    - create.calendar-event
+    - respond.calendar-invite
+    - submit.application
+    - publish.public-post
+    - share.resume-url
+    - open.external-pr-on-user-behalf
+  forbidden:
+    - publish.raw-private-transcript
+    - publish.raw-third-party-chat
+    - commit.secret-value
+    - mutate.repo-owned-runtime-file-in-pod
+    - send.whatsapp-message
+
+approvalShape:
+  requiredFields:
+    - recipient
+    - channel
+    - exactTextOrArtifactUrl
+    - currentUserApproval
+  staleApprovalExpiresAfter: one-turn-unless-reconfirmed

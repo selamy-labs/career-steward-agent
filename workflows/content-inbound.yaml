@@ -1,0 +1,27 @@
+apiVersion: agents.selamy.dev/v1alpha1
+kind: AgentWorkflow
+metadata:
+  name: content-inbound
+
+purpose: >
+  Convert private proof-of-work, interview learnings, and agent-system work
+  into approval-gated public-safe article/post drafts that support career and
+  customer inbound.
+
+capabilities:
+  - article-fodder-backlog
+  - public-safety-scrub
+  - draft-generation
+  - inbound-source-attribution
+  - approval-gated-publication
+
+privacy:
+  defaultClassification: private
+  publicUseRequires:
+    - scrubbed-private-details
+    - no raw transcripts
+    - no private recruiter/interviewer names
+    - no local paths
+    - no secrets
+    - explicit user approval
+

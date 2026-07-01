@@ -1,0 +1,187 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agents.selamy.dev/schemas/agent.manifest.v1alpha1.json",
+  "title": "DeclarativeAgent manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "apiVersion",
+    "kind",
+    "x-versioning",
+    "metadata",
+    "identity",
+    "runtime",
+    "capabilities",
+    "knowledge",
+    "workflows",
+    "policies",
+    "schedules",
+    "featureFlags",
+    "observability",
+    "validation"
+  ],
+  "properties": {
+    "apiVersion": { "const": "agents.selamy.dev/v1alpha1" },
+    "kind": { "const": "DeclarativeAgent" },
+    "x-versioning": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schemaVersion", "compatibility", "unknownFields", "deprecationPolicy"],
+      "properties": {
+        "schemaVersion": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+        "compatibility": {
+          "type": "object",
+          "required": ["backwardCompatibleWithin", "breakingChangesRequire"],
+          "properties": {
+            "backwardCompatibleWithin": { "const": "v1alpha1" },
+            "breakingChangesRequire": {
+              "type": "array",
+              "items": { "enum": ["schemaVersionMajorBump", "migrationPlan", "changelogEntry"] },
+              "minItems": 3
+            }
+          }
+        },
+        "unknownFields": { "const": "reject" },
+        "deprecationPolicy": {
+          "type": "object",
+          "required": ["minSupportedMinorVersions", "removalRequiresMigration"],
+          "properties": {
+            "minSupportedMinorVersions": { "type": "integer", "minimum": 1 },
+            "removalRequiresMigration": { "const": true }
+          }
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "owner", "description"],
+      "properties": {
+        "name": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*[a-z0-9]$" },
+        "owner": { "type": "string" },
+        "description": { "type": "string", "minLength": 20 }
+      }
+    },
+    "identity": {
+      "type": "object",
+      "required": ["displayName", "role", "mandate", "principals"],
+      "properties": {
+        "displayName": { "type": "string" },
+        "role": { "type": "string" },
+        "mandate": { "type": "string" },
+        "principals": { "type": "array", "items": { "$ref": "#/$defs/principal" }, "minItems": 1 }
+      }
+    },
+    "runtime": {
+      "type": "object",
+      "required": ["engine", "image", "model", "resources", "state", "rollout"],
+      "properties": {
+        "engine": { "type": "string" },
+        "image": {
+          "type": "object",
+          "required": ["repository", "tagPolicy"],
+          "properties": {
+            "repository": { "type": "string" },
+            "tagPolicy": { "enum": ["pinned-digest", "semver-plus-digest"] }
+          }
+        },
+        "model": { "type": "object", "required": ["provider", "apiKeySecretRef", "defaultModel", "summaryModel"] },
+        "resources": { "$ref": "#/$defs/resources" },
+        "state": {
+          "type": "object",
+          "required": ["pvc", "mutableZones", "immutableZones"],
+          "properties": {
+            "pvc": { "$ref": "#/$defs/pvc" },
+            "mutableZones": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+            "immutableZones": { "type": "array", "items": { "type": "string" }, "minItems": 1 }
+          }
+        },
+        "rollout": { "type": "object", "required": ["reconciler", "restartPolicy"] }
+      }
+    },
+    "capabilities": {
+      "type": "object",
+      "required": ["toolsets", "connectors"],
+      "properties": {
+        "toolsets": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+        "connectors": { "type": "object", "additionalProperties": { "$ref": "#/$defs/connector" } }
+      }
+    },
+    "knowledge": { "type": "object", "required": ["wiki", "memory", "careerGraph", "generatedArtifacts"] },
+    "workflows": { "type": "array", "items": { "$ref": "#/$defs/ref" }, "minItems": 1 },
+    "policies": { "type": "object", "required": ["approvalGates", "privacy", "writeBoundary"] },
+    "schedules": { "type": "object", "additionalProperties": { "$ref": "#/$defs/schedule" } },
+    "featureFlags": { "type": "object", "required": ["provider", "flags"] },
+    "observability": { "type": "object", "required": ["logs", "telemetry"] },
+    "validation": {
+      "type": "object",
+      "required": ["requiredChecks"],
+      "properties": {
+        "requiredChecks": {
+          "type": "array",
+          "items": { "type": "string" },
+          "contains": { "const": "schema-valid" }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "principal": {
+      "type": "object",
+      "required": ["id", "relationship", "approvalAuthority"],
+      "properties": {
+        "id": { "type": "string" },
+        "relationship": { "type": "string" },
+        "approvalAuthority": { "type": "boolean" }
+      }
+    },
+    "resources": {
+      "type": "object",
+      "required": ["requests", "limits"],
+      "properties": {
+        "requests": { "type": "object", "required": ["cpu", "memory"] },
+        "limits": { "type": "object", "required": ["memory"] }
+      }
+    },
+    "pvc": {
+      "type": "object",
+      "required": ["mountPath", "storageClass", "size"],
+      "properties": {
+        "mountPath": { "type": "string" },
+        "storageClass": { "type": "string" },
+        "size": { "type": "string" }
+      }
+    },
+    "connector": {
+      "type": "object",
+      "required": ["enabled", "capabilities"],
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "provider": { "type": "string" },
+        "capabilities": { "type": "array", "items": { "type": "string" } },
+        "secrets": { "type": "array", "items": { "type": "string" } },
+        "sendMessages": { "type": "boolean" },
+        "writeAccess": { "type": "string" }
+      }
+    },
+    "ref": {
+      "type": "object",
+      "required": ["ref"],
+      "properties": {
+        "ref": { "type": "string", "pattern": "^workflows/[a-z0-9-]+\\.yaml$" }
+      }
+    },
+    "schedule": {
+      "type": "object",
+      "required": ["workflow", "kind", "expr"],
+      "properties": {
+        "workflow": { "type": "string" },
+        "kind": { "enum": ["cron", "event"] },
+        "expr": { "type": "string" },
+        "sideEffects": { "type": "array", "items": { "type": "string" } },
+        "externalSend": { "enum": ["approval-required", "forbidden"] }
+      }
+    }
+  }
+}
+

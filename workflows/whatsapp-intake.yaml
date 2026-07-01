@@ -1,0 +1,35 @@
+apiVersion: agents.selamy.dev/v1alpha1
+kind: AgentWorkflow
+metadata:
+  name: whatsapp-intake
+
+purpose: >
+  Read configured WhatsApp groups through Unipile, extract private internal
+  signals, and create paraphrased digests/content seeds without sending
+  WhatsApp messages or quoting raw third-party text.
+
+inputs:
+  connectors:
+    - whatsapp
+    - telegram
+  config:
+    maxMessagesPerChat: 30
+    maxContentSeedsPerCycle: 3
+
+capabilities:
+  - group-message-read
+  - signal-classification
+  - paraphrased-digest-generation
+  - content-seed-queueing
+  - private-knowledge-entry-write
+
+outputs:
+  private:
+    - /opt/data/wiki/whatsapp/intake/latest_whatsapp_digest.json
+    - /opt/data/wiki/whatsapp/content/latest_content_seeds.json
+    - /opt/data/wiki/whatsapp/knowledge/latest_knowledge_entries.json
+  notifications:
+    - telegram.user-summary
+
+externalSend: forbidden
+
